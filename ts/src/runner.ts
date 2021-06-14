@@ -2,13 +2,13 @@ import {ClamsensorTestCaseDefiner, ClamsensorVerifier, CLAMSENSOR_AUTOWIRED_TEST
 
 let twoDig = (x: number) => (x > 9? "": "0") + x;
 let threeDig = (x: number) => (x > 99? "": "0") + twoDig(x);
-let log = (x: string) => logNoNewline(x + "\n")
+let log = (x: string, noPrefix?: boolean) => logNoNewline(x + "\n", noPrefix)
 
-let logNoNewline = (x: string) => {
-	if(!ClamsensorTestRunner.suppressDateTime){
+let logNoNewline = (x: string, noPrefix?: boolean) => {
+	if(!ClamsensorTestRunner.suppressDateTime && !noPrefix){
 		let date = new Date();
 		let dateStr = `${date.getFullYear()}.${twoDig(date.getMonth() + 1)}.${twoDig(date.getDate())} ${twoDig(date.getHours())}:${twoDig(date.getMinutes())}:${twoDig(date.getSeconds())}.${threeDig(date.getMilliseconds())}`;
-		x = dateStr + " | " + x;
+		x = dateStr + " " + x;
 	}
 
 	process.stderr.write(x, "utf8")
@@ -167,9 +167,9 @@ export class ClamsensorTestRunner {
 			try {
 				await test.doVerify();
 				this.passedTests.add(test);
-				log("OK");
+				log("OK", true);
 			} catch(e){
-				log(`fail: ${ClamsensorTestRunner.suppressStacks? e.message: e.stack}`);
+				log(`fail: ${ClamsensorTestRunner.suppressStacks? e.message: e.stack}`, true);
 				this.failedTests.add(test);
 			}
 		}

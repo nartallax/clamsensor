@@ -121,7 +121,7 @@ export class ClamsensorTransformerFactory implements Imploder.CustomTransformerD
 	}
 
 	private regenerateFile() {
-		let fileContent = `import {ClamsensorTestRunner} from "${this.opts.clamsensorModuleName || "clamsensor"}";\n`;
+		let fileContent = `import {ClamsensorTestRunner} from "${this.opts.clamsensorModuleName || "@nartallax/clamsensor"}";\n`;
 		[...this.modules].sort((a, b) => a > b? 1: a < b? -1: 0).forEach(module => {
 			fileContent += `import "${module}";\n`
 		});
