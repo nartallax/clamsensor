@@ -1,0 +1,79 @@
+{ 
+    "imploderConfig": {
+        "entryModule": "main.ts",
+        "entryFunction": "main",
+        "outFile": "bundle.js",
+        "target": "es2018",
+		"profiles": {
+            "release": {
+                "target": "es5"
+            },
+            "test": {
+                "entryModule": "test_generated.ts",
+                "entryFunction": "testMain",
+                "transformers": [
+                    {
+                        "imploderBundle": "../../target/clamsensor_test.js",
+                        "params": { 
+                            "generatedFilePath": "test_generated.ts",
+                            "useTestsInModule": [
+                                "^/tests_for_.*$"
+                            ],
+                            "clamsensorModuleName": "../../target/clamsensor_test",
+                            "suppressStacks": true,
+	                        "suppressDateTime": true
+                        }
+                    }
+                ]
+			}
+		}
+    },
+
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "lib": [
+            "dom",
+            "es2018"
+        ],
+
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "./*"
+            ]
+        },
+
+        "allowJs": false,
+
+        "noErrorTruncation": true,
+        "downlevelIteration": true,
+        "skipLibCheck": true,
+
+        "noImplicitUseStrict": false,
+        "alwaysStrict": true,
+        "newLine": "lf",
+        "noEmitOnError": true,
+        "pretty": false,
+        "removeComments": true,
+        "sourceMap": false,
+        "charset": "utf8",
+        "declaration": false,
+        "emitBOM": false,
+        "outDir": "js",
+        "module": "amd",
+        "target": "es2018",
+
+        "strict": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noStrictGenericChecks": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true
+    }
+}

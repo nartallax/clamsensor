@@ -1,0 +1,72 @@
+{ 
+    "imploderConfig": {
+        "entryModule": "ts/src/main.ts",
+        "outFile": "target/clamsensor.js",
+        "target": "es2018",
+        "moduleBlacklistRegexp": ["^test\/.*$"],
+        "profiles": {
+            "test": {
+                "entryModule": "ts/test/selftest_main.ts",
+                "moduleBlacklistRegexp": [],
+                "outFile": "target/clamsensor_test.js"
+            }
+        }
+    },
+
+    "exclude": [
+        "test_projects",
+        "target",
+        "js"
+    ],
+
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "lib": [
+            "dom",
+            "es2018"
+        ],
+
+        "baseUrl": "./ts",
+        "paths": {
+            "*": [
+                "./src/*"
+            ],
+            "test/*": [
+                "./test/*"
+            ]
+        },
+
+        "allowJs": false,
+
+        "noErrorTruncation": true,
+        "downlevelIteration": true,
+        "skipLibCheck": true,
+
+        "noImplicitUseStrict": false,
+        "alwaysStrict": true,
+        "newLine": "lf",
+        "noEmitOnError": true,
+        "pretty": false,
+        "removeComments": true,
+        "sourceMap": false,
+        "charset": "utf8",
+        "declaration": false,
+        "emitBOM": false,
+        "outDir": "js/main",
+        "module": "amd",
+        "target": "es2018",
+
+        "strict": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noStrictGenericChecks": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true
+    }
+}

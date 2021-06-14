@@ -1,0 +1,16 @@
+Testing started. Will run 13 tests.
+/main: fail_contains... fail: Expected abcde to contain ecd, but it's not.
+/main: fail_ends_with... fail: Expected abcde to end with bcd, but it's not.
+/main: fail_equals... fail: Expected values to be the same, but they are not: "abcde" vs "bcd"
+/main: fail_falsy... fail: Expected abcde to be falsy, but it's not.
+/main: fail_matches... fail: Expected abcde to match /^[a-e]{,3}$/, but it's not.
+/main: fail_not_contains... fail: Expected abcde not to contain bcd, but it is.
+/main: fail_not_ends_with... fail: Expected abcde not to end with cde, but it is.
+/main: fail_not_equals... fail: Expected values not to be the same, but they are: "abcde"
+/main: fail_not_matches... fail: Expected abcde not to match /^[a-e]{5}$/, but it is.
+/main: fail_not_starts_with... fail: Expected abcde not to start with abc, but it is.
+/main: fail_starts_with... fail: Expected abcde to start with bcd, but it's not.
+/main: fail_truthy... fail: Expected  to be truthy, but it's not.
+/main: good strings... OK
+Testing completed: 12 / 13 of tests are failed.
+Failed tests are: /main: fail_contains, /main: fail_ends_with, /main: fail_equals, /main: fail_falsy, /main: fail_matches, /main: fail_not_contains, /main: fail_not_ends_with, /main: fail_not_equals, /main: fail_not_matches, /main: fail_not_starts_with, /main: fail_starts_with, /main: fail_truthy

@@ -1,0 +1,21 @@
+Testing started. Will run 18 tests.
+/main: fail_faster_than_a... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
+/main: fail_faster_than_b... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
+/main: fail_faster_than_c... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
+/main: fail_faster_than_d... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
+/main: fail_faster_than_e... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: fail_faster_throws... fail: Nonono
+/main: fail_slower_than_a... fail: Timing check failed: 100 ms < 200 ms, difference is 100 ms
+/main: fail_slower_than_b... fail: Timing check failed: 100 ms < 200 ms, difference is 100 ms
+/main: fail_slower_than_c... fail: Timing check failed: 100 ms < 200 ms, difference is 100 ms
+/main: fail_slower_than_d... fail: Timing check failed: 100 ms < 200 ms, difference is 100 ms
+/main: fail_slower_than_e... fail: Timing check failed: 100 ms < 200 ms, difference is 100 ms
+/main: fail_throws_anything... fail: I'm an unexpected error!
+/main: fail_throws_async_reg_match_fn... fail: Incorrect exception is thrown: expected exception text to match /^Da!$/, but it is not: "Nonono"
+/main: fail_throws_async_reg_match_promise... fail: Incorrect exception is thrown: expected exception text to match /^Da!$/, but it is not: "Nonono"
+/main: fail_throws_err_match... fail: Incorrect exception is thrown: expected exception text to be "Da!", but it is not: "Nonono"
+/main: fail_throws_reg_match... fail: Incorrect exception is thrown: expected exception text to match /^Da!$/, but it is not: "Nonono"
+/main: fail_throws_str_match... fail: Incorrect exception is thrown: expected exception text to be "Niet!", but it is not: "Nonono"
+/main: good functions... OK
+Testing completed: 17 / 18 of tests are failed.
+Failed tests are: /main: fail_faster_than_a, /main: fail_faster_than_b, /main: fail_faster_than_c, /main: fail_faster_than_d, /main: fail_faster_than_e, /main: fail_faster_throws, /main: fail_slower_than_a, /main: fail_slower_than_b, /main: fail_slower_than_c, /main: fail_slower_than_d, /main: fail_slower_than_e, /main: fail_throws_anything, /main: fail_throws_async_reg_match_fn, /main: fail_throws_async_reg_match_promise, /main: fail_throws_err_match, /main: fail_throws_reg_match, /main: fail_throws_str_match

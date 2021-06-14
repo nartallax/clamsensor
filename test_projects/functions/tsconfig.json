@@ -1,0 +1,72 @@
+{ 
+    "imploderConfig": {
+        "target": "es2018",
+        "outFile": "bundle.js",
+		"profiles": {
+            "test": {
+                "entryModule": "test_generated.ts",
+                "entryFunction": "testMain",
+                "transformers": [
+                    {
+                        "imploderBundle": "../../target/clamsensor_test.js",
+                        "params": { 
+                            "generatedFilePath": "test_generated.ts",
+                            "clamsensorModuleName": "../../target/clamsensor_test",
+                            "suppressStacks": true,
+	                        "suppressDateTime": true,
+                            "roundTimeTo": 10
+                        }
+                    }
+                ]
+			}
+		}
+    },
+
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "lib": [
+            "dom",
+            "es2018"
+        ],
+
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "./*"
+            ]
+        },
+
+        "allowJs": false,
+
+        "noErrorTruncation": true,
+        "downlevelIteration": true,
+        "skipLibCheck": true,
+
+        "noImplicitUseStrict": false,
+        "alwaysStrict": true,
+        "newLine": "lf",
+        "noEmitOnError": true,
+        "pretty": false,
+        "removeComments": true,
+        "sourceMap": false,
+        "charset": "utf8",
+        "declaration": false,
+        "emitBOM": false,
+        "outDir": "js",
+        "module": "amd",
+        "target": "es2018",
+
+        "strict": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noStrictGenericChecks": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true
+    }
+}

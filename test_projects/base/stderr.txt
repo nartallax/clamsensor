@@ -1,0 +1,8 @@
+Testing started. Will run 6 tests.
+/tests_for_discount: basic cost calculation... OK
+/tests_for_discount: cost calculation bad values... OK
+/tests_for_discount: cost calculation corner cases... OK
+/tests_for_discount: sequental cost calculation... OK
+/tests_for_poweroftwo: bad values... OK
+/tests_for_poweroftwo: good values... OK
+Testing completed: all 6 tests are passed
