@@ -27,17 +27,21 @@ let transformVisitRecursive = <T extends tsc.Node>(node: T, context: tsc.Transfo
 	return tsc.visitEachChild(node, wrappedVisitor, context);
 }
 
-export class ClamsensorTransformerFactory implements Imploder.CustomTransformerDefinition {
+export class ClamsensorTransformerFactory {
 
-	readonly transformerName = "clamsensor";
 	private readonly generatedFilePath: string;
 	private readonly moduleNameRegexps: RegExp[];
 
-	static create(imploderContext: Imploder.Context, params: ClamsensorTransformerParams | undefined): ClamsensorTransformerFactory {
+	static create(imploderContext: Imploder.Context, params: ClamsensorTransformerParams | undefined): Imploder.CustomTransformerFactory {
 		if(!params || !params.generatedFilePath){
 			throw new Error("Clamsensor requires generatedFilePath to be passed as a transformer parameter. It was not.");
 		}
-		return new ClamsensorTransformerFactory(imploderContext, params);
+
+		let instance = new ClamsensorTransformerFactory(imploderContext, params)
+		let result: Imploder.CustomTransformerFactory = transformContext => file => instance.transformFile(file, transformContext);
+		result.onModuleDelete = instance.onModuleDelete.bind(instance);
+
+		return result;
 	}
 
 	constructor(private readonly imploderContext: Imploder.Context, private readonly opts: ClamsensorTransformerParams){
@@ -52,72 +56,62 @@ export class ClamsensorTransformerFactory implements Imploder.CustomTransformerD
 
 	private readonly modules: Set<string> = new Set();
 
-	createForBefore(transformerContext: tsc.TransformationContext): tsc.CustomTransformer {
-		void this.imploderContext;
-		void transformerContext;
-		void this.opts;
-
-		return {
-			transformBundle: x => x,
-			transformSourceFile: fileNode => {
-				if(Path.resolve(fileNode.fileName) === this.generatedFilePath){
-					return fileNode;
-				}
-
-				let moduleName = this.imploderContext.modulePathResolver.getCanonicalModuleName(fileNode.fileName);
-				if(!this.shouldTakeModule(moduleName)){
-					return fileNode;
-				}
-
-				let typeChecker = this.imploderContext.compiler.program.getTypeChecker();
-				let hasChange = false;
-
-				function typeHasMarker(type: tsc.Type, markerName: string): boolean {
-					if(type.isUnionOrIntersection()){
-						return !!type.types.find(x => typeHasMarker(x, markerName))
-					}
-				
-					if(type.isClassOrInterface()){
-						for(let decl of type.getSymbol()?.getDeclarations() || []){
-							if(tsc.isInterfaceDeclaration(decl)){
-								return true;
-							}
-						}
-					}
-
-					return false;
-				}
-
-
-				fileNode = transformVisitRecursive(fileNode, transformerContext, node => {
-					if(!tsc.isCallExpression(node)){
-						return null;
-					}
-
-					let fn = node.expression;
-					let fnType = typeChecker.getTypeAtLocation(fn);
-					if(typeHasMarker(fnType, "CLAMSENSOR_AUTOWIRED_TEST_MARKER")){
-						if(!this.modules.has(moduleName)){
-							this.modules.add(moduleName);
-							hasChange = true;
-						}
-						let args = [...node.arguments, tsc.factory.createStringLiteral(moduleName)];
-						return tsc.factory.updateCallExpression(node, node.expression, node.typeArguments, args);
-					}
-
-					// in any case we won't go into function invocation
-					// test definer invocations are only allowed at top-level
-					return node;
-				})
-
-				if(hasChange){
-					this.regenerateFile();
-				}
-
-				return fileNode;
-			}
+	private transformFile(fileNode: tsc.SourceFile, transformerContext: tsc.TransformationContext): tsc.SourceFile {
+		if(Path.resolve(fileNode.fileName) === this.generatedFilePath){
+			return fileNode;
 		}
 
+		let moduleName = this.imploderContext.modulePathResolver.getCanonicalModuleName(fileNode.fileName);
+		if(!this.shouldTakeModule(moduleName)){
+			return fileNode;
+		}
+
+		let typeChecker = this.imploderContext.compiler.program.getTypeChecker();
+		let hasChange = false;
+
+		function typeHasMarker(type: tsc.Type, markerName: string): boolean {
+			if(type.isUnionOrIntersection()){
+				return !!type.types.find(x => typeHasMarker(x, markerName))
+			}
+		
+			if(type.isClassOrInterface()){
+				for(let decl of type.getSymbol()?.getDeclarations() || []){
+					if(tsc.isInterfaceDeclaration(decl)){
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+
+		fileNode = transformVisitRecursive(fileNode, transformerContext, node => {
+			if(!tsc.isCallExpression(node)){
+				return null;
+			}
+
+			let fn = node.expression;
+			let fnType = typeChecker.getTypeAtLocation(fn);
+			if(typeHasMarker(fnType, "CLAMSENSOR_AUTOWIRED_TEST_MARKER")){
+				if(!this.modules.has(moduleName)){
+					this.modules.add(moduleName);
+					hasChange = true;
+				}
+				let args = [...node.arguments, tsc.factory.createStringLiteral(moduleName)];
+				return tsc.factory.updateCallExpression(node, node.expression, node.typeArguments, args);
+			}
+
+			// in any case we won't go into function invocation
+			// test definer invocations are only allowed at top-level
+			return node;
+		})
+
+		if(hasChange){
+			this.regenerateFile();
+		}
+
+		return fileNode;
 	}
 
 	private regenerateFile() {

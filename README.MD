@@ -32,15 +32,14 @@ Typical configuration may look like this (that's tsconfig.json):
                 "entryModule": "generated/test_entrypoint.ts",
                 "entryFunction": "testMain",
                 "outFile": "target/test_bundle.js",
-                "transformers": [
+                "plugins": [
                     {
-                        "imploderBundle": "@nartallax/clamsensor",
-                        "params": { 
-                            "generatedFilePath": "generated/test_entrypoint.ts",
-                            "useTestsInModule": [
-                                "^/tests_for_.*$"
-                            ],
-                        }
+                        "transform": "@nartallax/clamsensor",
+                        "type": "imploder",
+                        "generatedFilePath": "generated/test_entrypoint.ts",
+                        "useTestsInModule": [
+                            "^/tests_for_.*$"
+                        ],
                     }
                 ]
             }

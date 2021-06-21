@@ -4,7 +4,7 @@ import {ClamsensorAssertor} from "assertor_types";
 import {ClamsensorTestRunner} from "runner";
 import {ClamsensorTransformerFactory, ClamsensorTransformerParams} from "transformer";
 
-export default function(context: Imploder.Context, params?: ClamsensorTransformerParams): Imploder.CustomTransformerDefinition {
+export default function(context: Imploder.Context, params?: ClamsensorTransformerParams): Imploder.CustomTransformerFactory {
 	return ClamsensorTransformerFactory.create(context, params);
 }
 

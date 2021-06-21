@@ -6,16 +6,15 @@
             "test": {
                 "entryModule": "test_generated.ts",
                 "entryFunction": "testMain",
-                "transformers": [
+                "plugins": [
                     {
-                        "imploderBundle": "../../target/clamsensor_test.js",
-                        "params": { 
-                            "generatedFilePath": "test_generated.ts",
-                            "clamsensorModuleName": "../../target/clamsensor_test",
-                            "suppressStacks": true,
-	                        "suppressDateTime": true,
-                            "roundTimeTo": 10
-                        }
+                        "transform": "../../target/clamsensor_test.js",
+                        "type": "imploder",
+                        "generatedFilePath": "test_generated.ts",
+                        "clamsensorModuleName": "../../target/clamsensor_test",
+                        "suppressStacks": true,
+                        "suppressDateTime": true,
+                        "roundTimeTo": 10
                     }
                 ]
 			}
