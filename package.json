@@ -1,6 +1,6 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A testing tool for Typescript projects, meant to be used with Imploder",
   "author": "Nartallax",
   "license": "0BSD",

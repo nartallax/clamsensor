@@ -94,7 +94,7 @@ export class ClamsensorTestRunner {
 	private matcherByArgVal(argValName: string, getMatcher: (value: string) => (test: ClamsensorVerificationEntry) => boolean): ((test: ClamsensorVerificationEntry) => boolean) | null {
 		let index = process.argv.indexOf(argValName);
 		if(index > 0){
-			let value = process.argv[index]
+			let value = process.argv[index + 1]
 			if(!value){
 				log("Value of argument " + argValName + " is not provided.");
 				process.exit(1);
