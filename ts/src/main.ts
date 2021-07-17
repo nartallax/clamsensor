@@ -18,6 +18,7 @@ export type ClamsensorTestCaseDefiner<T = ClamsensorAssertor> =
  * All top-level function invocations with this marker will be threated as test case definitions
  * Modules containing such invocations will be loaded when testing
  * It is also implied that function marked with this marker will add some tests to the test runner. */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface -- marker interfaces intended to be empty
 export interface CLAMSENSOR_AUTOWIRED_TEST_MARKER {}
 
 export const test = ClamsensorTestRunner.createTestDefinerFunction({

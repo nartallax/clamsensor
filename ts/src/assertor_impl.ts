@@ -10,7 +10,7 @@ function fail(msg: string): never {
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any does not really go anywhere as function type is explicitly defined
 export const ClamsensorDefaultAssertor: ClamsensorAssertor = (value: unknown): any => {
 	switch(typeof(value)){
 		case "string": return new ClamsensorAssertorBoundForStringImpl(value);
