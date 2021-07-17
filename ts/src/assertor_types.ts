@@ -7,9 +7,9 @@ export type ClamsensorPromiseOrFn<R> = Promise<R> | (() => R | Promise<R>);
  * @param R type of result value
  * @param P promise or some function
  */
-export type ClamsensorValuePromiseIfIsPromise<R, P extends ClamsensorPromiseOrFn<any>> = 
-	P extends Promise<any>? Promise<R>: 
-	P extends () => Promise<any>? Promise<R>:
+export type ClamsensorValuePromiseIfIsPromise<R, P extends ClamsensorPromiseOrFn<unknown>> = 
+	P extends Promise<unknown>? Promise<R>: 
+	P extends () => Promise<unknown>? Promise<R>:
 	R;
 
 // not so beautiful here

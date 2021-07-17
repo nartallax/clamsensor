@@ -1,5 +1,7 @@
 import {test} from "../../target/clamsensor_test";
 
+type MapPairs = [number | string | symbol, unknown][];
+
 class Point {
 	constructor(private x: number, private y: number){
 		void (this.x + this.y);
@@ -50,11 +52,11 @@ test("good objects", assert => {
 	assert(new Set([{a: 5}])).notEqualsTo(new Set([{b: 10}]));
 
 	let sym = Symbol("z")
-	assert(new Map([[1, 1],["a", sym],[sym, 2]] as [any, any][])).equalsTo(new Map([[1, 1],["a", sym],[sym, 2]] as [any, any][]));
-	assert(new Map([["1", 1]] as [any, any][])).notEqualsTo(new Map([[1, 1]] as [any, any][]));
-	assert(new Map([["1", {a: 5}]] as [any, any][])).notEqualsTo(new Map([[1, {a: 5}]] as [any, any][]));
+	assert(new Map([[1, 1],["a", sym],[sym, 2]] as MapPairs)).equalsTo(new Map([[1, 1],["a", sym],[sym, 2]] as MapPairs));
+	assert(new Map([["1", 1]])).notEqualsTo(new Map([[1, 1]]));
+	assert(new Map([["1", {a: 5}]])).notEqualsTo(new Map([[1, {a: 5}]]));
 
-	assert(new Set([1,3,2])).notEqualsTo(new Map([[1, 1],["a", 3],[sym, 2]] as [any, any][]));
+	assert(new Set([1,3,2])).notEqualsTo(new Map([[1, 1],["a", 3],[sym, 2]] as MapPairs));
 	assert(new Set()).notEqualsTo(new Map());
 });
 
@@ -99,14 +101,14 @@ test("fail_array_swap_equals", assert => assert([{a: 5}, {b: 10}]).equalsTo([{b:
 test("fail_array_nested_equals", assert => assert([{a: 5, b: {c: 15}}, {b: 10}]).equalsTo([{a: 5, b: {c: 16}}, {b: 10}]));
 test("fail_nested_array_equals", assert => assert({a: [1,2,3]}).equalsTo({a: [1,3,4]}));
 
-test("fail_map_equals_a", assert => assert(new Map([["1", 1]] as [any, any][])).equalsTo(new Map([[1, 1]] as [any, any][])));
-test("fail_map_equals_b", assert => assert(new Map([["1", {a: 5}]] as [any, any][])).equalsTo(new Map([[1, {a: 5}]] as [any, any][])));
+test("fail_map_equals_a", assert => assert(new Map([["1", 1]] as MapPairs)).equalsTo(new Map([[1, 1]] as MapPairs)));
+test("fail_map_equals_b", assert => assert(new Map([["1", {a: 5}]] as MapPairs)).equalsTo(new Map([[1, {a: 5}]] as MapPairs)));
 test("fail_map_not_equals", assert => {
 	let sym = Symbol("z")
-	assert(new Map([[1, 1],["a", sym],[sym, 2]] as [any, any][])).notEqualsTo(new Map([[1, 1],["a", sym],[sym, 2]] as [any, any][]))
+	assert(new Map([[1, 1],["a", sym],[sym, 2]] as MapPairs)).notEqualsTo(new Map([[1, 1],["a", sym],[sym, 2]] as MapPairs))
 });
 test("fail_map_equals_set", assert => {
 	let sym = Symbol("z")
-	assert(new Set([1,3,2])).equalsTo(new Map([[1, 1],["a", 3],[sym, 2]] as [any, any][]))
+	assert(new Set([1,3,2])).equalsTo(new Map([[1, 1],["a", 3],[sym, 2]] as MapPairs))
 });
 test("fail_map_equals_set_empty", assert => assert(new Set()).equalsTo(new Map()));

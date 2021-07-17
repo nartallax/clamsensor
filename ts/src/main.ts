@@ -17,8 +17,7 @@ export type ClamsensorTestCaseDefiner<T = ClamsensorAssertor> =
 /** This is marker interface.
  * All top-level function invocations with this marker will be threated as test case definitions
  * Modules containing such invocations will be loaded when testing
- * It is also implied that function marked with this marker will add some tests to the test runner.
- */
+ * It is also implied that function marked with this marker will add some tests to the test runner. */
 export interface CLAMSENSOR_AUTOWIRED_TEST_MARKER {}
 
 export const test = ClamsensorTestRunner.createTestDefinerFunction({

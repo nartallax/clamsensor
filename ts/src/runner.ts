@@ -82,7 +82,7 @@ export class ClamsensorTestRunner {
 	private readonly failedTests: Set<ClamsensorVerificationEntry> = new Set();
 	private readonly passedTests: Set<ClamsensorVerificationEntry> = new Set();
 
-	static async main(){
+	static async main(): Promise<void | never> {
 		try {
 			await new ClamsensorTestRunner().unwrappedMain();
 		} catch(e){

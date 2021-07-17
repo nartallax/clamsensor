@@ -1,4 +1,4 @@
-export function debounce(time: number, fn: () => void){
+export function debounce(time: number, fn: () => void): () => void {
 	let timeout: NodeJS.Timeout | null = null;
 	return () => {
 		if(timeout){
@@ -8,7 +8,7 @@ export function debounce(time: number, fn: () => void){
 	}
 }
 
-export function anyToString(x: any){
+export function anyToString(x: unknown): string {
 	switch(typeof(x)){
 		case "symbol": return x.toString();
 		case "object": return x === null? "null": JSON.stringify(x);

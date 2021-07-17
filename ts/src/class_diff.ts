@@ -5,13 +5,21 @@ export interface ClassDiff {
 	noClassB?: boolean;
 }
 
-export function getClassDiff(a: any, b: any): ClassDiff | null{
+export function getClassDiff(a: unknown, b: unknown): ClassDiff | null{
 	if(typeof(a) !== "object" || typeof(b) !== "object"){
 		throw new Error(`Trying to check for class-diff an non-objects (objects of type ${typeof(a)} and ${typeof(b)})`);
 	}
 
-	let ctrA = (a as any).constructor;
-	let ctrB = (b as any).constructor;
+	if(a === b){
+		return null;
+	}
+
+	if(!a || !b){
+		throw new Error("Expected both values to be objects, got " + a + " and " + b);
+	}
+
+	let ctrA = a.constructor;
+	let ctrB = b.constructor;
 	if(ctrA === ctrB){
 		return null;
 	}

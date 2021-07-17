@@ -1,6 +1,6 @@
 import {ClamsensorTestRunner, ClamsensorDefaultAssertor} from "../../target/clamsensor_test";
 
-export var birdCount = 0;
+export let birdCount = 0;
 
 export const testWithSetupA = ClamsensorTestRunner.createTestDefinerFunction({
 	getAssertor: () => ClamsensorDefaultAssertor,

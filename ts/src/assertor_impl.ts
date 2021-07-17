@@ -10,6 +10,7 @@ function fail(msg: string): never {
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ClamsensorDefaultAssertor: ClamsensorAssertor = (value: unknown): any => {
 	switch(typeof(value)){
 		case "string": return new ClamsensorAssertorBoundForStringImpl(value);
@@ -202,23 +203,19 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 		// could not get typescript to understand implicitly what I'm about to do
 		// at least they are contained inside this method
 		try {
-			let promOrValue = (this.isFn(this.value)? this.value(): this.value) as R | Promise<R>;
+			const promOrValue = (this.isFn(this.value)? this.value(): this.value) as R | Promise<R>;
 			if(promOrValue && typeof(promOrValue) === "object" && promOrValue instanceof Promise){
-				return new Promise<void>(async (ok, bad) => {
-					try {
-						await promOrValue;
-					} catch(e){
+				return new Promise<void>((ok, bad) => {
+					promOrValue.then(() => {
+						bad(this.getNoExceptionException(exceptionDescription));
+					}, e => {
 						try {
 							this.verifyException(exceptionDescription, e);
 							ok();
 						} catch(ee){
 							bad(ee);
 						}
-
-						return;
-					}
-
-					bad(this.getNoExceptionException(exceptionDescription));
+					});
 				}) as ClamsensorValuePromiseIfIsPromise<void, P>
 			}
 		} catch(e){

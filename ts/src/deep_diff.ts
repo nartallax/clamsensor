@@ -17,7 +17,7 @@ export function deepDiffToString(d: DeepDiff): string {
 	return res;
 }
 
-export function getDeepDiff(a: unknown, b: unknown, isTopLevel: boolean = true): DeepDiff | null {
+export function getDeepDiff(a: unknown, b: unknown, isTopLevel = true): DeepDiff | null {
 	if(a === b){
 		return null;
 	}
@@ -43,7 +43,7 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel: boolean = true):
 				valueA: anyToString(a), 
 				valueB: anyToString(b)
 			};
-		case "object":
+		case "object": {
 			if(a === null || b === null){
 				return {
 					path: "",
@@ -124,8 +124,8 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel: boolean = true):
 				}
 			}
 			
-			let keysA = Object.keys(a as any);
-			let keysB = Object.keys(b as any);
+			let keysA = Object.keys(a);
+			let keysB = Object.keys(b as Record<string, unknown>);
 			if(keysA.length !== keysB.length){
 				let diff = getDeepDiff(keysA, keysB, false);
 				if(diff){
@@ -133,8 +133,8 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel: boolean = true):
 					return diff;
 				}
 			}
-			for(let key in (a as any)){
-				let compResult = getDeepDiff((a as any)[key], (b as any)[key], false);
+			for(let key in a){
+				let compResult = getDeepDiff(a[key as keyof(typeof a)], (b as Record<string, unknown>)[key], false);
 				if(compResult){
 					compResult.path = (isTopLevel? "": ".") + JSON.stringify(key) + compResult.path;
 					return compResult;
@@ -142,6 +142,7 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel: boolean = true):
 			}
 
 			return null;
+		}
 		default:
 			throw new Error("Unknown type of value: " + typeof(a));
 	}

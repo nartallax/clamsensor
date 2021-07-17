@@ -16,12 +16,15 @@
     "pub": "npm run test && ./scripts/prepare_release.sh && cd target && npm publish --access public"
   },
   "dependencies": {
-    "@nartallax/imploder": "^1.1.0",
-    "typescript": "^4.3.2"
+    "@nartallax/imploder": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^15.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
     "dts-bundle-generator": "^5.9.0",
-    "tslib": "^2.2.0"
+    "eslint": "^7.30.0",
+    "tslib": "^2.2.0",
+    "typescript": "^4.3.5"
   }
 }

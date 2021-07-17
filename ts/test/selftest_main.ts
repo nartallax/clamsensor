@@ -10,7 +10,7 @@ export default dflt; // default is not re-exported when export * from; re-export
 let failedProjects = new Set<string>();
 let passedProjects = new Set<string>();
 
-export async function main(){
+export async function main(): Promise<void | never> {
 	try {
 		await unwrappedMain();
 	} catch(e){
