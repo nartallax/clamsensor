@@ -1,4 +1,4 @@
-Testing started. Will run 18 tests.
+Testing started. Will run 37 tests.
 /main: fail_faster_than_a... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
 /main: fail_faster_than_b... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
 /main: fail_faster_than_c... fail: Timing check failed: 200 ms > 100 ms, difference is 100 ms
@@ -17,5 +17,24 @@ Testing started. Will run 18 tests.
 /main: fail_throws_reg_match... fail: Incorrect exception is thrown: expected exception text to match /^Da!$/, but it is not: "Nonono"
 /main: fail_throws_str_match... fail: Incorrect exception is thrown: expected exception text to be "Niet!", but it is not: "Nonono"
 /main: good functions... OK
-Testing completed: 17 / 18 of tests are failed.
-Failed tests are: /main: fail_faster_than_a, /main: fail_faster_than_b, /main: fail_faster_than_c, /main: fail_faster_than_d, /main: fail_faster_than_e, /main: fail_faster_throws, /main: fail_slower_than_a, /main: fail_slower_than_b, /main: fail_slower_than_c, /main: fail_slower_than_d, /main: fail_slower_than_e, /main: fail_throws_anything, /main: fail_throws_async_reg_match_fn, /main: fail_throws_async_reg_match_promise, /main: fail_throws_err_match, /main: fail_throws_reg_match, /main: fail_throws_str_match
+/main: sync timers... OK
+/main: sync_timer_fail_1... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_10... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_11... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_12... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_13... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_14... fail: Impossible to robustly measure time of potentially-neverending promise using potentially-blocking function as ethalon. Rewrite this assertion: if promise is guaranteed to return, use isSlower(); or, if ethalon function is not blocking, invoke it and pass resulting promise.
+/main: sync_timer_fail_15... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_16... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_17... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_18... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_2... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_3... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_4... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_5... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_6... fail: Timing check failed: 100 ms > 50 ms, difference is 50 ms
+/main: sync_timer_fail_7... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_8... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+/main: sync_timer_fail_9... fail: Timing check failed: 50 ms < 100 ms, difference is 50 ms
+Testing completed: 35 / 37 of tests are failed.
+Failed tests are: /main: fail_faster_than_a, /main: fail_faster_than_b, /main: fail_faster_than_c, /main: fail_faster_than_d, /main: fail_faster_than_e, /main: fail_faster_throws, /main: fail_slower_than_a, /main: fail_slower_than_b, /main: fail_slower_than_c, /main: fail_slower_than_d, /main: fail_slower_than_e, /main: fail_throws_anything, /main: fail_throws_async_reg_match_fn, /main: fail_throws_async_reg_match_promise, /main: fail_throws_err_match, /main: fail_throws_reg_match, /main: fail_throws_str_match, /main: sync_timer_fail_1, /main: sync_timer_fail_10, /main: sync_timer_fail_11, /main: sync_timer_fail_12, /main: sync_timer_fail_13, /main: sync_timer_fail_14, /main: sync_timer_fail_15, /main: sync_timer_fail_16, /main: sync_timer_fail_17, /main: sync_timer_fail_18, /main: sync_timer_fail_2, /main: sync_timer_fail_3, /main: sync_timer_fail_4, /main: sync_timer_fail_5, /main: sync_timer_fail_6, /main: sync_timer_fail_7, /main: sync_timer_fail_8, /main: sync_timer_fail_9

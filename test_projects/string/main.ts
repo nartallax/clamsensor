@@ -2,11 +2,11 @@ import {test} from "../../target/clamsensor_test";
 
 test("good strings", assert => {
 	assert("abcde").equalsTo("abcde");
-	assert("abcde").notEqualsTo("edcba");
-	assert("abcde").notEqualsTo(5);
-	assert("5").notEqualsTo(5);
-	assert("abcde").notEqualsTo({});
-	assert("abcde").notEqualsTo({toString: () => "abcde"});
+	assert("abcde" as string).notEqualsTo("edcba");
+	assert("abcde" as unknown).notEqualsTo(5);
+	assert("5" as unknown).notEqualsTo(5);
+	assert("abcde" as unknown).notEqualsTo({});
+	assert("abcde" as unknown).notEqualsTo({toString: () => "abcde"});
 	assert("abcde").startsWith("abc");
 	assert("abcde").notStartsWith("bcd");
 	assert("abcde").endsWith("cde");
@@ -23,7 +23,7 @@ test("good strings", assert => {
 	assert("abcde").notMatches(/^\d+$/)
 });
 
-test("fail_equals", assert => assert("abcde").equalsTo("bcd"));
+test("fail_equals", assert => assert("abcde" as unknown).equalsTo("bcd"));
 test("fail_not_equals", assert => assert("abcde").notEqualsTo("abcde"));
 test("fail_starts_with", assert => assert("abcde").startsWith("bcd"));
 test("fail_not_starts_with", assert => assert("abcde").notStartsWith("abc"));

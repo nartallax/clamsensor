@@ -3,7 +3,7 @@ import {test} from "../../target/clamsensor_test";
 test("good numbers", assert => {
 	assert(12345).equalsTo(12345);
 	assert(0x10).equalsTo(16);
-	assert(12345).notEqualsTo(54321);
+	assert(12345 as number).notEqualsTo(54321);
 	assert(12345).biggerOrEqualsTo(12345);
 	assert(12345).biggerOrEqualsTo(12344.9);
 	assert(12345).biggerThan(12344.9);
@@ -19,7 +19,7 @@ test("good numbers", assert => {
 	assert(1).isNotTrue();
 });
 
-test("fail_equals_to", assert => assert(12345).equalsTo(54321));
+test("fail_equals_to", assert => assert(12345 as number).equalsTo(54321));
 test("fail_not_equals_to", assert => assert(12345).notEqualsTo(12345));
 test("fail_bigger_or_equals", assert => assert(12345).biggerOrEqualsTo(12346));
 test("fail_smaller_or_equals", assert => assert(12345).smallerOrEqualsTo(12344));

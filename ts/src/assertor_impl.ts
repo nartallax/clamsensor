@@ -163,22 +163,94 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 		return [res, time];
 	}
 
-	private async getTiming(x: number | ClamsensorPromiseOrFn<unknown>): Promise<[R, number, number]> {
+	private async getTimingOfBoth(x: number | ClamsensorPromiseOrFn<unknown>): Promise<[R, number, number]> {
 		if(typeof(x) === "number"){
 			let [res, resultTime] = await this.timeableToPromise<R>(this.value);
 			return [res, resultTime, x];
 		} else {
-			let [[aRes, aTime], [, bTime]] = await Promise.all([
-				this.timeableToPromise<R>(this.value),
-				this.timeableToPromise(x)
-			]);
+			let timeExpected: number;
+			let timeGot: number;
+			let res: R;
+			// we cannot run both functions simultaneously because if one of them is synchronous time measurement won't be right
+			// but! if one or both arguments are already launched promises, we have to await them first
+			// otherwise our time measurement will be incorrect
+			// same goes for getTimingOfOne()
+			if(isPromise(x)){
+				if(isPromise(this.value)){
+					[[, timeExpected], [res, timeGot]] = await Promise.all([
+						this.timeableToPromise(x), 
+						this.timeableToPromise<R>(this.value)
+					])
+				} else {
+					[, timeExpected] = await this.timeableToPromise(x);
+					[res, timeGot] = await this.timeableToPromise<R>(this.value);
+				}
+			} else {
+				[res, timeGot] = await this.timeableToPromise<R>(this.value);
+				[, timeExpected] = await this.timeableToPromise(x);
+			}
 	
-			return [aRes, aTime, bTime];
+			return [res, timeGot, timeExpected];
+		}
+	}
+
+	private limitPromiseTime(prom: Promise<[unknown, number]>, timeLimit: number): Promise<[boolean, number]>{
+		return Promise.race([
+			prom.then(([, time]) => [true, time] as [boolean, number]),
+			new Promise<[boolean, number]>(ok => setTimeout(() => ok([false, timeLimit]), timeLimit))
+		])
+	}
+
+	private async getTimingOfOne(x: number | ClamsensorPromiseOrFn<unknown>): Promise<[boolean, number, number]> {
+		if(typeof(x) === "number"){
+			let [returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), x)
+
+			if(returnedEarly){
+				// for synchronous functions, let's check that we actually returned early
+				returnedEarly = x > timeGot;
+			}
+
+			return [returnedEarly, timeGot, x];
+		} else {
+			let timeExpected: number;
+			let timeGot: number;
+			let returnedEarly: boolean;
+
+			// see comments in getTimingOfBoth() about what exactly is happening here
+			if(isPromise(x)){
+				if(isPromise(this.value)){
+					let testedPromise = this.timeableToPromise(this.value);
+					[, timeExpected] = await this.timeableToPromise(x);
+					[returnedEarly, timeGot] = await this.limitPromiseTime(testedPromise, timeExpected);
+				} else {
+					[, timeExpected] = await this.timeableToPromise(x);
+					[returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
+				}
+			} else {
+				if(isPromise(this.value)){
+					// it's not possible because we will have to wait for synchronous function to end
+					// and that will mess up our measurement of promise timing
+					// OR we will have to wait for promise to end, but it possibly won't return at all, which is unacceptable
+					throw new Error("Impossible to robustly measure time of potentially-neverending promise using potentially-blocking function as ethalon. Rewrite this assertion: if promise is guaranteed to return, use isSlower(); or, if ethalon function is not blocking, invoke it and pass resulting promise.");
+				} else {
+					[, timeExpected] = await this.timeableToPromise(x);
+					[returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
+				}
+			}
+
+			if(returnedEarly){
+				// for synchronous functions, let's check that we actually returned early
+				returnedEarly = timeExpected > timeGot
+			} else {
+				timeGot = Number.POSITIVE_INFINITY;
+			}
+	
+			return [returnedEarly, timeGot, timeExpected];
 		}
 	}
 
 	async fasterThan(x: number | ClamsensorPromiseOrFn<unknown>): Promise<R>{
-		let [callResult, timeGot, timeExpected] = await this.getTiming(x);
+		let [callResult, timeGot, timeExpected] = await this.getTimingOfBoth(x);
 
 		if(timeGot > timeExpected){
 			throw new Error(`Timing check failed: ${formatTime(timeGot)} ms > ${formatTime(timeExpected)} ms, difference is ${formatTime(timeGot - timeExpected)} ms`);
@@ -189,13 +261,20 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 
 
 	async slowerThan(x: number | ClamsensorPromiseOrFn<unknown>): Promise<R> {
-		let [callResult, timeGot, timeExpected] = await this.getTiming(x);
+		let [callResult, timeGot, timeExpected] = await this.getTimingOfBoth(x);
 
 		if(timeGot < timeExpected){
 			throw new Error(`Timing check failed: ${formatTime(timeGot)} ms < ${formatTime(timeExpected)} ms, difference is ${formatTime(timeExpected - timeGot)} ms`);
 		}
 
 		return callResult;
+	}
+
+	async willNotReturnFasterThan(x: number | ClamsensorPromiseOrFn<unknown>): Promise<void> {
+		let [returnedEarly, timeGot, timeExpected] = await this.getTimingOfOne(x);
+		if(returnedEarly){
+			throw new Error(`Timing check failed: ${formatTime(timeGot)} ms < ${formatTime(timeExpected)} ms, difference is ${formatTime(timeExpected - timeGot)} ms`);
+		}
 	}
 
 	throws(exceptionDescription: ClamsensorExceptionSpecification): ClamsensorValuePromiseIfIsPromise<void, P> {
@@ -225,4 +304,8 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 
 		throw this.getNoExceptionException(exceptionDescription);
 	}
+}
+
+function isPromise(x: unknown): x is Promise<unknown> {
+	return !!x && typeof(x) === "object" && x instanceof Promise
 }

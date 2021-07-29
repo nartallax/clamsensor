@@ -120,7 +120,7 @@ export class ClamsensorTransformerFactory {
 			fileContent += `import "${module}";\n`
 		});
 
-		fileContent += "export function testMain(){\n"
+		fileContent += "export function testMain(): void {\n"
 
 		if(this.opts.suppressDateTime){
 			fileContent += "\tClamsensorTestRunner.suppressDateTime = true;\n"
