@@ -1,0 +1,5 @@
+Testing started. Will run 2 tests.
+/main: require... OK
+/main: will fail... fail: Tester function is invoked without passing module name. This probably means that Clamsensor was not run as transformer at compile time.
+Testing completed: 1 / 2 of tests are failed.
+Failed tests are: /main: will fail

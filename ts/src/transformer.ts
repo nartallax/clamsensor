@@ -76,7 +76,7 @@ export class ClamsensorTransformerFactory {
 		
 			if(type.isClassOrInterface()){
 				for(let decl of type.getSymbol()?.getDeclarations() || []){
-					if(tsc.isInterfaceDeclaration(decl)){
+					if(tsc.isInterfaceDeclaration(decl) && decl.name.text === markerName){
 						return true;
 					}
 				}
@@ -88,23 +88,25 @@ export class ClamsensorTransformerFactory {
 
 		fileNode = transformVisitRecursive(fileNode, transformerContext, node => {
 			if(!tsc.isCallExpression(node)){
+				// sometimes, top-level expressions are not really top-level
+				// so we have to go deeper
 				return null;
 			}
 
 			let fn = node.expression;
 			let fnType = typeChecker.getTypeAtLocation(fn);
-			if(typeHasMarker(fnType, "CLAMSENSOR_AUTOWIRED_TEST_MARKER")){
-				if(!this.modules.has(moduleName)){
-					this.modules.add(moduleName);
-					hasChange = true;
-				}
-				let args = [...node.arguments, tsc.factory.createStringLiteral(moduleName)];
-				return tsc.factory.updateCallExpression(node, node.expression, node.typeArguments, args);
+			if(!typeHasMarker(fnType, "CLAMSENSOR_AUTOWIRED_TEST_MARKER")){
+				// in any case we won't go into function body
+				// test definer invocations are only allowed at top-level
+				return node;
 			}
 
-			// in any case we won't go into function invocation
-			// test definer invocations are only allowed at top-level
-			return node;
+			if(!this.modules.has(moduleName)){
+				this.modules.add(moduleName);
+				hasChange = true;
+			}
+			let args = [...node.arguments, tsc.factory.createStringLiteral(moduleName)];
+			return tsc.factory.updateCallExpression(node, node.expression, node.typeArguments, args);
 		})
 
 		if(hasChange){

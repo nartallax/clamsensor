@@ -1,8 +1,5 @@
 import {ClamsensorExceptionSpecification} from "exception_diff";
 
-// тесты:
-// тайминги синхронных функций. fasterThan/slowerThan/willNotReturnFasterThan
-
 export type ClamsensorPromiseOrFn<R> = Promise<R> | (() => R | Promise<R>);
 
 /** If P is promise or function thath returns promise, this type is Promise<R>; otherwise, it's just R
