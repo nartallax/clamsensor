@@ -194,37 +194,36 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 		}
 	}
 
-	private limitPromiseTime(prom: Promise<[unknown, number]>, timeLimit: number): Promise<[boolean, number]>{
+	private limitPromiseTime<T = unknown>(prom: Promise<[T, number]>, timeLimit: number): Promise<TimeLimitedPromiseResult<T>>{
 		return Promise.race([
-			prom.then(([, time]) => [true, time] as [boolean, number]),
-			new Promise<[boolean, number]>(ok => setTimeout(() => ok([false, timeLimit]), timeLimit))
+			prom.then(([result, time]) => ({inTime: true, time, result})),
+			new Promise<TimeLimitedPromiseResult<T>>(ok => setTimeout(() => ok({inTime: false, time: timeLimit}), timeLimit))
 		])
 	}
 
-	private async getTimingOfOne(x: number | ClamsensorPromiseOrFn<unknown>): Promise<[boolean, number, number]> {
+	private async getTimingOfOne(x: number | ClamsensorPromiseOrFn<unknown>): Promise<TimeLimitedPromiseResult<R> & {timeExpected: number}> {
 		if(typeof(x) === "number"){
-			let [returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), x)
+			let res = await this.limitPromiseTime(this.timeableToPromise(this.value), x)
 
-			if(returnedEarly){
-				// for synchronous functions, let's check that we actually returned early
-				returnedEarly = x > timeGot;
-			}
-
-			return [returnedEarly, timeGot, x];
+			// for synchronous functions, let's check that we actually returned early
+			let inTime = res.inTime && x > res.time;
+			
+			// cast here (and later) needed to ensure typescript that data matches constraints on result and inTime
+			return {...res, inTime, timeExpected: x} as TimeLimitedPromiseResult<R> & {timeExpected: number};
 		} else {
+
+			let promRes: TimeLimitedPromiseResult<R>;
 			let timeExpected: number;
-			let timeGot: number;
-			let returnedEarly: boolean;
 
 			// see comments in getTimingOfBoth() about what exactly is happening here
 			if(isPromise(x)){
 				if(isPromise(this.value)){
-					let testedPromise = this.timeableToPromise(this.value);
+					let testedPromise = this.timeableToPromise<R>(this.value);
 					[, timeExpected] = await this.timeableToPromise(x);
-					[returnedEarly, timeGot] = await this.limitPromiseTime(testedPromise, timeExpected);
+					promRes = await this.limitPromiseTime<R>(testedPromise, timeExpected);
 				} else {
 					[, timeExpected] = await this.timeableToPromise(x);
-					[returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
+					promRes = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
 				}
 			} else {
 				if(isPromise(this.value)){
@@ -234,29 +233,30 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 					throw new Error("Impossible to robustly measure time of potentially-neverending promise using potentially-blocking function as ethalon. Rewrite this assertion: if promise is guaranteed to return, use isSlower(); or, if ethalon function is not blocking, invoke it and pass resulting promise.");
 				} else {
 					[, timeExpected] = await this.timeableToPromise(x);
-					[returnedEarly, timeGot] = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
+					promRes = await this.limitPromiseTime(this.timeableToPromise(this.value), timeExpected);
 				}
 			}
 
-			if(returnedEarly){
+			let inTime = promRes.inTime;
+			if(promRes.inTime){
 				// for synchronous functions, let's check that we actually returned early
-				returnedEarly = timeExpected > timeGot
+				inTime = timeExpected > promRes.time
 			} else {
-				timeGot = Number.POSITIVE_INFINITY;
+				promRes.time = Number.POSITIVE_INFINITY;
 			}
 	
-			return [returnedEarly, timeGot, timeExpected];
+			return {...promRes, inTime, timeExpected} as TimeLimitedPromiseResult<R> & {timeExpected: number}
 		}
 	}
 
 	async fasterThan(x: number | ClamsensorPromiseOrFn<unknown>): Promise<R>{
-		let [callResult, timeGot, timeExpected] = await this.getTimingOfBoth(x);
+		let res = await this.getTimingOfOne(x);
 
-		if(timeGot > timeExpected){
-			throw new Error(`Timing check failed: ${formatTime(timeGot)} ms > ${formatTime(timeExpected)} ms, difference is ${formatTime(timeGot - timeExpected)} ms`);
+		if(res.inTime){
+			return res.result;
 		}
 
-		return callResult;
+		throw new Error(`Timing check failed: function/promise failed to return in ${formatTime(res.timeExpected)} ms`);
 	}
 
 
@@ -271,9 +271,9 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 	}
 
 	async willNotReturnFasterThan(x: number | ClamsensorPromiseOrFn<unknown>): Promise<void> {
-		let [returnedEarly, timeGot, timeExpected] = await this.getTimingOfOne(x);
-		if(returnedEarly){
-			throw new Error(`Timing check failed: ${formatTime(timeGot)} ms < ${formatTime(timeExpected)} ms, difference is ${formatTime(timeExpected - timeGot)} ms`);
+		let {inTime, time, timeExpected} = await this.getTimingOfOne(x);
+		if(inTime){
+			throw new Error(`Timing check failed: ${formatTime(time)} ms < ${formatTime(timeExpected)} ms, difference is ${formatTime(timeExpected - time)} ms`);
 		}
 	}
 
@@ -309,3 +309,14 @@ class ClamsensorAssertorBoundForPromiseOrFnImpl<R, P extends ClamsensorPromiseOr
 function isPromise(x: unknown): x is Promise<unknown> {
 	return !!x && typeof(x) === "object" && x instanceof Promise
 }
+
+interface DatafulTimeLimitedPromiseResult<T> {
+	inTime: true;
+	result: T
+}
+
+interface DatalessTimeLimitedPromiseResult {
+	inTime: false;
+}
+
+type TimeLimitedPromiseResult<T> = (DatafulTimeLimitedPromiseResult<T> | DatalessTimeLimitedPromiseResult) & {time: number}

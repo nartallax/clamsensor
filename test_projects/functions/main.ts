@@ -24,7 +24,7 @@ test("good functions", async assert => {
 
 		assert(sleep(100)).fasterThan(sleep(200)),
 		assert(() => sleep(100)).fasterThan(() => sleep(200)),
-		assert(sleep(100)).fasterThan(() => sleep(200)),
+		//assert(sleep(100)).fasterThan(() => sleep(200)),
 		assert(() => sleep(100)).fasterThan(sleep(200)),
 		assert(sleep(200)).slowerThan(sleep(100)),
 		assert(() => sleep(200)).slowerThan(() => sleep(100)),
@@ -52,7 +52,7 @@ test("good functions", async assert => {
 // and promise is not equal to function that returns promise
 test("sync timers", async assert => {
 	await assert(() => sleep(50)).fasterThan(() => sleepSync(100));
-	await assert(sleep(50)).fasterThan(() => sleepSync(100));
+	//await assert(sleep(50)).fasterThan(() => sleepSync(100));
 	await assert(() => sleepSync(50)).fasterThan(() => sleep(100));
 	await assert(() => sleepSync(50)).fasterThan(sleep(100));
 	await assert(() => sleepSync(50)).fasterThan(() => sleepSync(100));
