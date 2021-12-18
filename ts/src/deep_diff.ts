@@ -1,31 +1,31 @@
-import {getClassDiff} from "class_diff";
-import {anyToString} from "utils";
+import {getClassDiff} from "class_diff"
+import {anyToString} from "utils"
 
 export interface DeepDiff {
-	path: string;
-	valueA: string;
-	valueB: string;
+	path: string
+	valueA: string
+	valueB: string
 }
 
 export function deepDiffToString(d: DeepDiff): string {
-	let res = "";
+	let res = ""
 	if(d.path){
-		res += "at path " + d.path + " ";
+		res += "at path " + d.path + " "
 	}
 
-	res += d.valueA + " vs " + d.valueB;
-	return res;
+	res += d.valueA + " vs " + d.valueB
+	return res
 }
 
 export function getDeepDiff(a: unknown, b: unknown, isTopLevel = true): DeepDiff | null {
 	if(a === b){
-		return null;
+		return null
 	}
 
 	if(typeof(a) !== typeof(b)){
-		return  {
+		return {
 			path: "",
-			valueA: anyToString(a), 
+			valueA: anyToString(a),
 			valueB: anyToString(b)
 		}
 	}
@@ -40,10 +40,10 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel = true): DeepDiff
 		case "symbol":
 			return {
 				path: "",
-				valueA: anyToString(a), 
+				valueA: anyToString(a),
 				valueB: anyToString(b)
-			};
-		case "object": {
+			}
+		case "object":{
 			if(a === null || b === null){
 				return {
 					path: "",
@@ -61,17 +61,17 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel = true): DeepDiff
 				}
 
 				for(let i = 0; i < a.length; i++){
-					let res = getDeepDiff(a[i], b[i], false);
+					let res = getDeepDiff(a[i], b[i], false)
 					if(res){
-						res.path = "[" + i + "]" + res.path;
-						return res;
+						res.path = "[" + i + "]" + res.path
+						return res
 					}
 				}
 
-				return null;
+				return null
 			}
 
-			let classDiff = getClassDiff(a, b);
+			let classDiff = getClassDiff(a, b)
 			if(classDiff){
 				return {
 					path: "<class>",
@@ -104,46 +104,46 @@ export function getDeepDiff(a: unknown, b: unknown, isTopLevel = true): DeepDiff
 			if(a instanceof Map && b instanceof Map){
 				// not the most efficient way to do this (intersecting keys checked twice)
 				for(let key of a.keys()){
-					let va = a.get(key);
-					let vb = b.get(key);
-					let diff = getDeepDiff(va, vb, false);
+					let va = a.get(key)
+					let vb = b.get(key)
+					let diff = getDeepDiff(va, vb, false)
 					if(diff){
-						diff.path = "[" + JSON.stringify(key) + "]" + diff.path;
-						return diff;
+						diff.path = "[" + JSON.stringify(key) + "]" + diff.path
+						return diff
 					}
 				}
 
 				for(let key of b.keys()){
-					let va = a.get(key);
-					let vb = b.get(key);
-					let diff = getDeepDiff(va, vb, false);
+					let va = a.get(key)
+					let vb = b.get(key)
+					let diff = getDeepDiff(va, vb, false)
 					if(diff){
-						diff.path = "[" + JSON.stringify(key) + "]" + diff.path;
-						return diff;
+						diff.path = "[" + JSON.stringify(key) + "]" + diff.path
+						return diff
 					}
 				}
 			}
-			
-			let keysA = Object.keys(a);
-			let keysB = Object.keys(b as Record<string, unknown>);
+
+			let keysA = Object.keys(a)
+			let keysB = Object.keys(b as Record<string, unknown>)
 			if(keysA.length !== keysB.length){
-				let diff = getDeepDiff(keysA, keysB, false);
+				let diff = getDeepDiff(keysA, keysB, false)
 				if(diff){
 					diff.path = "<keyset>" + diff.path
-					return diff;
+					return diff
 				}
 			}
 			for(let key in a){
-				let compResult = getDeepDiff(a[key as keyof(typeof a)], (b as Record<string, unknown>)[key], false);
+				let compResult = getDeepDiff(a[key as keyof(typeof a)], (b as Record<string, unknown>)[key], false)
 				if(compResult){
-					compResult.path = (isTopLevel? "": ".") + JSON.stringify(key) + compResult.path;
-					return compResult;
+					compResult.path = (isTopLevel ? "" : ".") + JSON.stringify(key) + compResult.path
+					return compResult
 				}
 			}
 
-			return null;
+			return null
 		}
 		default:
-			throw new Error("Unknown type of value: " + typeof(a));
+			throw new Error("Unknown type of value: " + typeof(a))
 	}
 }

@@ -1,16 +1,16 @@
-import type {Imploder} from "@nartallax/imploder";
-import {ClamsensorDefaultAssertor} from "assertor_impl";
-import {ClamsensorAssertor} from "assertor_types";
-import {ClamsensorTestRunner} from "runner";
-import {ClamsensorTransformerFactory, ClamsensorTransformerParams} from "transformer";
+import type {Imploder} from "@nartallax/imploder"
+import {ClamsensorDefaultAssertor} from "assertor_impl"
+import {ClamsensorAssertor} from "assertor_types"
+import {ClamsensorTestRunner} from "runner"
+import {ClamsensorTransformerFactory, ClamsensorTransformerParams} from "transformer"
 
 export default function(context: Imploder.Context, params?: ClamsensorTransformerParams): Imploder.CustomTransformerFactory {
-	return ClamsensorTransformerFactory.create(context, params);
+	return ClamsensorTransformerFactory.create(context, params)
 }
 
-export type ClamsensorVerifier<T = ClamsensorAssertor> = (assertor: T) => void | Promise<void>;
+export type ClamsensorVerifier<T = ClamsensorAssertor> = (assertor: T) => void | Promise<void>
 
-export type ClamsensorTestCaseDefiner<T = ClamsensorAssertor> = 
+export type ClamsensorTestCaseDefiner<T = ClamsensorAssertor> =
 	((name: string, verifier: ClamsensorVerifier<T>) => void) &
 	((name: string, description: string, verifier: ClamsensorVerifier<T>) => void)
 
@@ -25,4 +25,4 @@ export const test = ClamsensorTestRunner.createTestDefinerFunction({
 	getAssertor: () => ClamsensorDefaultAssertor
 })
 
-export {ClamsensorTestRunner, ClamsensorDefaultAssertor};
+export {ClamsensorTestRunner, ClamsensorDefaultAssertor}
