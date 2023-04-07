@@ -4,3 +4,5 @@ target
 test_projects/*/js
 test_projects/*/bundle.js
 test_projects/*/test_generated.ts
+dist
+.parcel-cache

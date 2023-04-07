@@ -1,7 +1,7 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "1.1.4",
-  "description": "A testing tool for Typescript projects, meant to be used with Imploder",
+  "version": "2.0.0",
+  "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
   "main": "clamsensor.js",
@@ -9,22 +9,31 @@
   "files": [
     "clamsensor.d.ts"
   ],
+  "bin": {
+    "clamsensor_codegen": "clamsensor_codegen.js"
+  },
   "bugs": "https://github.com/nartallax/clamsensor/issues",
   "repository": "github:nartallax/clamsensor",
   "scripts": {
-    "test": "./scripts/selftest.sh",
-    "pub": "npm run test && ./scripts/prepare_release.sh && cd target && npm publish --access public"
-  },
-  "dependencies": {
-    "@nartallax/imploder": "^1.1.0"
+    "pub": "./scripts/prepare_release.sh && cd target && npm publish --access public"
   },
   "devDependencies": {
-    "@types/node": "^15.6.1",
+    "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
-    "dts-bundle-generator": "^5.9.0",
+    "dts-bundle-generator": "8.0.0",
     "eslint": "^7.30.0",
-    "tslib": "^2.2.0",
-    "typescript": "^4.3.5"
+    "parcel": "^2.8.3",
+    "typescript": "^5.0.3"
+  },
+  "targets": {
+    "lib": {
+      "source": "./ts/src/main.ts",
+      "context": "node"
+    },
+    "generator": {
+      "source": "./ts/src/generator.ts",
+      "context": "node"
+    }
   }
 }

@@ -1,28 +1,78 @@
-import type {Imploder} from "@nartallax/imploder"
-import {ClamsensorDefaultAssertor} from "assertor_impl"
-import {ClamsensorAssertor} from "assertor_types"
-import {ClamsensorTestRunner} from "runner"
-import {ClamsensorTransformerFactory, ClamsensorTransformerParams} from "transformer"
+export namespace Clamsensor {
+	const nameStack: string[] = []
 
-export default function(context: Imploder.Context, params?: ClamsensorTransformerParams): Imploder.CustomTransformerFactory {
-	return ClamsensorTransformerFactory.create(context, params)
+	const allTests: {
+		name: string
+		tester(): void | Promise<void>
+	}[] = []
+
+	export function describe(name: string, groupDescriber: () => void): void {
+		nameStack.push(name)
+		try {
+			groupDescriber()
+		} finally {
+			nameStack.pop()
+		}
+	}
+
+	export function test(name: string, tester: () => void | Promise<void>): void {
+		allTests.push({
+			name: [...nameStack, name].join(" > "),
+			tester
+		})
+	}
+
+	type TestRunningOptions = {
+		readonly nameFilter?: string | RegExp
+	}
+
+	export async function runTests(options: TestRunningOptions = {}): Promise<void> {
+		let tests = allTests
+		if(options.nameFilter){
+			if(options.nameFilter instanceof RegExp){
+				const regexp = options.nameFilter
+				tests = tests.filter(test => regexp.test(test.name))
+			} else {
+				const search = options.nameFilter.toLowerCase()
+				tests = tests.filter(test => test.name.toLowerCase().includes(search))
+			}
+		}
+
+		if(tests.length === 0){
+			process.stderr.write("No tests selected.\n")
+			process.exit(1)
+		}
+
+		const failedTests: string[] = []
+		for(const test of tests){
+			process.stderr.write(test.name + "...")
+			try {
+				const result = test.tester()
+				if(result instanceof Promise){
+					await result
+				}
+				process.stderr.write(" OK\n")
+			} catch(e){
+				process.stderr.write(" failed: " + e)
+				failedTests.push(test.name)
+			}
+		}
+
+		if(failedTests.length === 0){
+			process.stderr.write(`All ${tests.length} tests were successful.\n`)
+		} else {
+			process.stderr.write(`Failed ${failedTests.length} tests (out of ${tests.length}):\n`)
+			for(const failedTestName of failedTests){
+				process.stderr.write(`\t${failedTestName}\n`)
+			}
+			process.exit(1)
+		}
+	}
+
+	export async function runFromArgv(): Promise<void> {
+		runTests({nameFilter: process.argv[2]})
+	}
 }
 
-export type ClamsensorVerifier<T = ClamsensorAssertor> = (assertor: T) => void | Promise<void>
-
-export type ClamsensorTestCaseDefiner<T = ClamsensorAssertor> =
-	((name: string, verifier: ClamsensorVerifier<T>) => void) &
-	((name: string, description: string, verifier: ClamsensorVerifier<T>) => void)
-
-/** This is marker interface.
- * All top-level function invocations with this marker will be threated as test case definitions
- * Modules containing such invocations will be loaded when testing
- * It is also implied that function marked with this marker will add some tests to the test runner. */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface -- marker interfaces intended to be empty
-export interface CLAMSENSOR_AUTOWIRED_TEST_MARKER {}
-
-export const test = ClamsensorTestRunner.createTestDefinerFunction({
-	getAssertor: () => ClamsensorDefaultAssertor
-})
-
-export {ClamsensorTestRunner, ClamsensorDefaultAssertor}
+export const describe = Clamsensor.describe
+export const test = Clamsensor.test

@@ -20,8 +20,7 @@ module.exports = {
     "target"
   ],
   rules: {
-    // у const есть свои применения, но требовать его вообще везде - значит загрязнять код
-    "prefer-const": "off",
+    "prefer-const": "warn",
 
     // у неймспейсов есть свои использования, запрещать их целиком неправильно
     "@typescript-eslint/no-namespace": "off",

@@ -49,7 +49,6 @@
         "pretty": false,
         "removeComments": true,
         "sourceMap": false,
-        "charset": "utf8",
         "declaration": false,
         "emitBOM": false,
         "outDir": "js/main",
