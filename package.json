@@ -1,6 +1,6 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
@@ -29,7 +29,9 @@
   "targets": {
     "lib": {
       "source": "./ts/src/main.ts",
-      "context": "node"
+      "context": "node",
+      "optimize": false,
+      "isLibrary": true
     },
     "generator": {
       "source": "./ts/src/generator.ts",

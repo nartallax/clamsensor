@@ -19,10 +19,10 @@ Third, you build and launch test build. It runs tests you select and gives progr
 
 First step is to define the test cases.
 
-    import {test} from "@nartallax/clamsensor";
+    import {describe, test} from "@nartallax/clamsensor";
     import {MyCalc} from "appcode/my_calc";
 
-    define("addition", () => {
+    describe("MyCalc", () => {
         test("calculator should sum numbers correctly", () => {
             if(MyCalc.sum(1,2,3) !== 6){
                 throw new Error("Something is wrong")
@@ -42,7 +42,8 @@ If you want to just have a module that imports from all the test modules without
 
 Next step is to build your test build using file generated at the previous step as entrypoint. It's up to you how to do that.  
 Then you can run your build like `node ./dist/test_build.js`.  
-If you chose to add code that runs test in generated code (default behaviour), you should also be able to pass an argument to filter by test name.  
+If you chose to add code that runs test in generated code (default behaviour), you should also be able to pass an argument (first one in CLI) to filter by test name.  
+You can also pass `--no-stack-trace` if you want to only see messages of the errors instead of full stacks.  
 
 ## Naming
 

@@ -24,6 +24,7 @@ export namespace Clamsensor {
 
 	type TestRunningOptions = {
 		readonly nameFilter?: string | RegExp
+		readonly showStacks?: boolean
 	}
 
 	export async function runTests(options: TestRunningOptions = {}): Promise<void> {
@@ -53,7 +54,13 @@ export namespace Clamsensor {
 				}
 				process.stderr.write(" OK\n")
 			} catch(e){
-				process.stderr.write(" failed: " + e)
+				let errStr: string
+				if(options.showStacks && e instanceof Error){
+					errStr = (e.stack + "") || (e + "")
+				} else {
+					errStr = e + ""
+				}
+				process.stderr.write(" failed: " + errStr + "\n")
 				failedTests.push(test.name)
 			}
 		}
@@ -69,8 +76,23 @@ export namespace Clamsensor {
 		}
 	}
 
+
 	export async function runFromArgv(): Promise<void> {
-		runTests({nameFilter: process.argv[2]})
+		let argv = process.argv.slice(2)
+
+		function getArgvBool(value: string): boolean {
+			const index = argv.indexOf(value)
+			if(index < 0){
+				return false
+			}
+			argv = [...argv.slice(0, index), ...argv.slice(index + 1)]
+			return true
+		}
+
+		const showStacks = !getArgvBool("--no-stack-trace")
+		const nameFilter = argv[0]
+
+		runTests({nameFilter, showStacks})
 	}
 }
 
