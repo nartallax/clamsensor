@@ -1,3 +1,5 @@
+import * as Process from "process"
+
 export namespace Clamsensor {
 	const nameStack: string[] = []
 
@@ -40,19 +42,19 @@ export namespace Clamsensor {
 		}
 
 		if(tests.length === 0){
-			process.stderr.write("No tests selected.\n")
-			process.exit(1)
+			Process.stderr.write("No tests selected.\n")
+			Process.exit(1)
 		}
 
 		const failedTests: string[] = []
 		for(const test of tests){
-			process.stderr.write(test.name + "...")
+			Process.stderr.write(test.name + "...")
 			try {
 				const result = test.tester()
 				if(result instanceof Promise){
 					await result
 				}
-				process.stderr.write(" OK\n")
+				Process.stderr.write(" OK\n")
 			} catch(e){
 				let errStr: string
 				if(options.showStacks && e instanceof Error){
@@ -60,25 +62,25 @@ export namespace Clamsensor {
 				} else {
 					errStr = e + ""
 				}
-				process.stderr.write(" failed: " + errStr + "\n")
+				Process.stderr.write(" failed: " + errStr + "\n")
 				failedTests.push(test.name)
 			}
 		}
 
 		if(failedTests.length === 0){
-			process.stderr.write(`All ${tests.length} tests were successful.\n`)
+			Process.stderr.write(`All ${tests.length} tests were successful.\n`)
 		} else {
-			process.stderr.write(`Failed ${failedTests.length} tests (out of ${tests.length}):\n`)
+			Process.stderr.write(`Failed ${failedTests.length} tests (out of ${tests.length}):\n`)
 			for(const failedTestName of failedTests){
-				process.stderr.write(`\t${failedTestName}\n`)
+				Process.stderr.write(`\t${failedTestName}\n`)
 			}
-			process.exit(1)
+			Process.exit(1)
 		}
 	}
 
 
 	export async function runFromArgv(): Promise<void> {
-		let argv = process.argv.slice(2)
+		let argv = Process.argv.slice(2)
 
 		function getArgvBool(value: string): boolean {
 			const index = argv.indexOf(value)
