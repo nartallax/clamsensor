@@ -1,6 +1,6 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
@@ -12,8 +12,8 @@
   "repository": "github:nartallax/clamsensor",
   "module": "esmodule",
   "exports": {
-    "import": "./esm/clamsensor.js",
-    "require": "./cjs/clamsensor.js"
+    "import": "./esm/clamsensor.mjs",
+    "require": "./cjs/clamsensor.cjs"
   },
   "scripts": {
     "dts": "npm run dts:generate && npm run dts:fix && npm run dts:cleanup",
@@ -23,8 +23,8 @@
     "typecheck": "cd ts && ../node_modules/typescript/bin/tsc --noEmit && cd - > /dev/null",
     "build": "npm run build:prepare && npm run dts && npm run build:esm && npm run build:cjs && npm run build:generator && npm run build:copy_static",
     "build:prepare": "rm -rf ./target && rm -rf ./dist && mkdir ./target",
-    "build:esm": "./node_modules/.bin/parcel build --target release_esm --no-cache && cp -r ./dist/release_esm ./target/esm",
-    "build:cjs": "./node_modules/.bin/parcel build --target release_cjs --no-cache && cp -r ./dist/release_cjs ./target/cjs",
+    "build:esm": "./node_modules/.bin/parcel build --target release_esm --no-cache && mkdir target/esm && cp ./dist/release_esm/clamsensor.js ./target/esm/clamsensor.mjs && cp ./dist/release_esm/clamsensor.js.map ./target/esm/clamsensor.mjs.map",
+    "build:cjs": "./node_modules/.bin/parcel build --target release_cjs --no-cache && mkdir target/cjs && cp ./dist/release_cjs/clamsensor.js ./target/cjs/clamsensor.cjs && cp ./dist/release_cjs/clamsensor.js.map ./target/cjs/clamsensor.cjs.map",
     "build:generator": "./node_modules/.bin/parcel build --target generator --no-cache && cp ./dist/generator/clamsensor_codegen.js ./target/clamsensor_codegen.cjs && cp ./dist/generator/clamsensor_codegen.js.map ./target/clamsensor_codegen.cjs.map",
     "build:copy_static": "cp ./package.json ./target/ && cp ./LICENSE ./target/ && cp ./README.md ./target",
     "pub": "npm run build && npm run pub:publish",
