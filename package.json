@@ -1,11 +1,12 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
   "main": "clamsensor.js",
   "types": "clamsensor.d.ts",
+  "type": "module",
   "files": [
     "clamsensor.d.ts"
   ],
@@ -31,11 +32,13 @@
       "source": "./ts/src/main.ts",
       "context": "node",
       "optimize": false,
-      "isLibrary": true
+      "isLibrary": true,
+      "outputFormat": "esmodule"
     },
     "generator": {
       "source": "./ts/src/generator.ts",
-      "context": "node"
+      "context": "node",
+      "outputFormat": "esmodule"
     }
   }
 }
