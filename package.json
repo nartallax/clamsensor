@@ -1,32 +1,27 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
   "types": "clamsensor.d.ts",
+  "type": "module",
+  "main": "clamsensor.js",
   "bin": {
-    "clamsensor_codegen": "clamsensor_codegen.cjs"
+    "clamsensor_codegen": "clamsensor_codegen.js"
   },
   "bugs": "https://github.com/nartallax/clamsensor/issues",
   "repository": "github:nartallax/clamsensor",
-  "module": "esmodule",
-  "exports": {
-    "import": "./esm/clamsensor.mjs",
-    "require": "./cjs/clamsensor.cjs"
-  },
   "scripts": {
     "dts": "npm run dts:generate && npm run dts:fix && npm run dts:cleanup",
     "dts:generate": "./node_modules/.bin/dts-bundle-generator -o target/tmp_clamsensor.d.ts --project tsconfig.json --export-referenced-types false --no-banner ts/src/clamsensor.ts",
     "dts:fix": "sed 's/export [*] from.*//g' target/tmp_clamsensor.d.ts | sed 's/export [{][}].*//g' > ./target/clamsensor.d.ts",
     "dts:cleanup": "rm target/tmp_clamsensor.d.ts",
     "typecheck": "cd ts && ../node_modules/typescript/bin/tsc --noEmit && cd - > /dev/null",
-    "build": "npm run build:prepare && npm run dts && npm run build:esm && npm run build:cjs && npm run build:generator && npm run build:copy_static",
+    "build": "npm run build:prepare && npm run dts && npm run build:build && npm run build:generator && npm run build:copy_static",
     "build:prepare": "rm -rf ./target && rm -rf ./dist && mkdir ./target",
-    "build:esm": "./node_modules/.bin/parcel build --target release_esm --no-cache && mkdir target/esm && cp ./dist/release_esm/clamsensor.js ./target/esm/clamsensor.mjs && cp ./dist/release_esm/clamsensor.js.map ./target/esm/clamsensor.mjs.map",
-    "build:cjs": "./node_modules/.bin/parcel build --target release_cjs --no-cache && mkdir target/cjs && cp ./dist/release_cjs/clamsensor.js ./target/cjs/clamsensor.cjs && cp ./dist/release_cjs/clamsensor.js.map ./target/cjs/clamsensor.cjs.map",
-    "build:append_shebang": " > ./target/package-cutter.cjs && cat ./dist/package-cutter.js >> ./target/package-cutter.cjs",
-    "build:generator": "./node_modules/.bin/parcel build --target generator --no-cache && echo \"#!/usr/bin/env node\n\" > ./target/clamsensor_codegen.cjs && cat ./dist/generator/clamsensor_codegen.js >> ./target/clamsensor_codegen.cjs && cp ./dist/generator/clamsensor_codegen.js.map ./target/clamsensor_codegen.cjs.map",
+    "build:build": "./node_modules/.bin/parcel build --target release --no-cache && cp ./dist/release/* ./target/",
+    "build:generator": "./node_modules/.bin/parcel build --target generator --no-cache && echo \"#!/usr/bin/env node\n\" > ./target/clamsensor_codegen.js && cat ./dist/generator/clamsensor_codegen.js >> ./target/clamsensor_codegen.js",
     "build:copy_static": "cp ./LICENSE ./target/ && cp ./README.md ./target && npm run build:cut_package",
     "build:cut_package": "./node_modules/.bin/package-cutter --output ./target/package.json",
     "pub": "npm run build && npm run pub:publish",
@@ -43,25 +38,18 @@
     "typescript": "^5.0.3"
   },
   "targets": {
-    "release_esm": {
+    "release": {
       "source": "./ts/src/clamsensor.ts",
       "context": "node",
       "optimize": false,
       "isLibrary": true,
       "outputFormat": "esmodule"
     },
-    "release_cjs": {
-      "source": "./ts/src/clamsensor.ts",
-      "context": "node",
-      "optimize": false,
-      "isLibrary": true,
-      "outputFormat": "commonjs"
-    },
     "generator": {
       "source": "./ts/src/clamsensor_codegen.ts",
       "context": "node",
       "optimize": false,
-      "outputFormat": "commonjs"
+      "outputFormat": "esmodule"
     }
   }
 }
