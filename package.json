@@ -1,6 +1,6 @@
 {
   "name": "@nartallax/clamsensor",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "A little testing framework",
   "author": "Nartallax",
   "license": "0BSD",
@@ -25,12 +25,15 @@
     "build:prepare": "rm -rf ./target && rm -rf ./dist && mkdir ./target",
     "build:esm": "./node_modules/.bin/parcel build --target release_esm --no-cache && mkdir target/esm && cp ./dist/release_esm/clamsensor.js ./target/esm/clamsensor.mjs && cp ./dist/release_esm/clamsensor.js.map ./target/esm/clamsensor.mjs.map",
     "build:cjs": "./node_modules/.bin/parcel build --target release_cjs --no-cache && mkdir target/cjs && cp ./dist/release_cjs/clamsensor.js ./target/cjs/clamsensor.cjs && cp ./dist/release_cjs/clamsensor.js.map ./target/cjs/clamsensor.cjs.map",
-    "build:generator": "./node_modules/.bin/parcel build --target generator --no-cache && cp ./dist/generator/clamsensor_codegen.js ./target/clamsensor_codegen.cjs && cp ./dist/generator/clamsensor_codegen.js.map ./target/clamsensor_codegen.cjs.map",
-    "build:copy_static": "cp ./package.json ./target/ && cp ./LICENSE ./target/ && cp ./README.md ./target",
+    "build:append_shebang": " > ./target/package-cutter.cjs && cat ./dist/package-cutter.js >> ./target/package-cutter.cjs",
+    "build:generator": "./node_modules/.bin/parcel build --target generator --no-cache && echo \"#!/usr/bin/env node\n\" > ./target/clamsensor_codegen.cjs && cat ./dist/generator/clamsensor_codegen.js >> ./target/clamsensor_codegen.cjs && cp ./dist/generator/clamsensor_codegen.js.map ./target/clamsensor_codegen.cjs.map",
+    "build:copy_static": "cp ./LICENSE ./target/ && cp ./README.md ./target && npm run build:cut_package",
+    "build:cut_package": "./node_modules/.bin/package-cutter --output ./target/package.json",
     "pub": "npm run build && npm run pub:publish",
     "pub:publish": "cd target && npm publish --access public && cd .."
   },
   "devDependencies": {
+    "@nartallax/package-cutter": "^1.0.2",
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
